@@ -1,7 +1,7 @@
 {
-  "name": "daj_sie_poznac",
+  "name": "Postownia",
   "version": "1.0.0",
-  "description": "Any usable dependencies need for this project",
+  "description": "Any usable dependencies needed for this project",
   "main": "app.js",
   "dependencies": {
     "body-parser": "^1.16.1",
@@ -15,7 +15,7 @@
     "type": "git",
     "url": "git+https://github.com/damianwojtkowski/postownia.git"
   },
-  "author": "Damian Wojtkowski\u001b[A\u001b[B",
+  "author": "Damian Wojtkowski",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/damianwojtkowski/postownia/issues"
