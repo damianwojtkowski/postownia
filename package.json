@@ -1,0 +1,24 @@
+{
+  "name": "daj_sie_poznac",
+  "version": "1.0.0",
+  "description": "Any usable dependencies need for this project",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/damianwojtkowski/postownia.git"
+  },
+  "author": "Damian Wojtkowski\u001b[A\u001b[B",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/damianwojtkowski/postownia/issues"
+  },
+  "homepage": "https://github.com/damianwojtkowski/postownia#readme"
+}
