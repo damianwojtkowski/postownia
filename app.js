@@ -7,14 +7,13 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use(express.static('javascript'))
+app.use(express.static(__dirname));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/html/login.html');
 }); //pobieranie strony coś jak ping
 
 app.get('/api/posts', function (req, res) {
-  console.log('Wysłane');
   fs.readFile('posts.json', 'utf8', function (err, content) {
     if (err) {
       res.send(err);
