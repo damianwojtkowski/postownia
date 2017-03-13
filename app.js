@@ -22,6 +22,27 @@ app.get('/api/posts', function (req, res) {
   });
 });
 
+app.post('/api/newpost', function (req, res) {
+  fs.readFile('posts.json', 'utf8', function (err, content) {
+    if (err) {
+      res.send(err);
+    }
+    console.log(res.body);
+    jsonData = JSON.parse(content);
+    var obj = {};
+    obj.user = "Damian";
+    obj.postdate = new Date();
+    obj.content = req.body.comment;
+    //console.log(obj.constructor === Object);
+    jsonData.posts.push(obj);
+
+    json = JSON.stringify(jsonData);
+
+    fs.writeFileSync('posts.json', json);
+    res.sendFile(__dirname + '/html/main.html');
+  });
+});
+
 app.post('/api/login', function (req, res) {
 	if (req.body.username === 'damian' && req.body.password === '123') {
     res.sendFile(__dirname + '/html/main.html');
