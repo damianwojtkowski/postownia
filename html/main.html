@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title> Main page </title>
+    <title>Main page</title>
   </head>
-
   <body>
-    <div>
-      <!-- form z metodą
-    login.html -> -->
+    <div id="container">
       <p>Welcome to Postownia</p><br>
+      <div class="posts">
+        <p>Posts our users</p>
+      </div>
+      <div class="newpost">
+        <textarea rows="4" cols="50" name="comment" form="newpost" placeholder="How are you?">
+        </textarea>
+        <form action="/api/newpost" method="post" id="newpost">
+          <input type="submit">
+        </form>
+      </div>
     </div>
-    <div class="posts">
-      <p>Posts our users</p>
-        <script src = "/javascript/postgenerator.js"></script>
-    </div>
-    <div class="newpost">
-      <textarea rows="4" cols="50" name="comment" form="newpost">Enter post here
-      </textarea>
-      <form action="/api/newpost" method="post" id="newpost">
-        <input type="submit">
-      </form>
-
-    </div>
-
+    <script src="/javascript/postgenerator.js"></script>
   </body>
 </html>

@@ -22,21 +22,38 @@ app.get('/api/posts', function (req, res) {
   });
 });
 
+app.get('/signup', function (req, res) {
+  res.sendFile(__dirname + '/html/signup.html');
+});
+
+app.post('/api/signup', function (req, res) {
+  fs.readFile('users.json', 'utf-8', function (err, content) {
+    if (err){
+      res.send(err);
+    }
+    var jsonUsers = JSON.parse(content);
+    var user = req.body.username;
+    var password = req.body.password;
+    jsonUsers[user] = password;
+    var json = JSON.stringify(jsonUsers);
+    fs.writeFileSync('users.json', json);
+    res.sendFile(__dirname + '/html/main.html');
+  });
+});
+
 app.post('/api/newpost', function (req, res) {
   fs.readFile('posts.json', 'utf8', function (err, content) {
     if (err) {
       res.send(err);
     }
-    console.log(res.body);
-    jsonData = JSON.parse(content);
+    var jsonData = JSON.parse(content);
     var obj = {};
     obj.user = "Damian";
     obj.postdate = new Date();
     obj.content = req.body.comment;
-    //console.log(obj.constructor === Object);
     jsonData.posts.push(obj);
 
-    json = JSON.stringify(jsonData);
+    var json = JSON.stringify(jsonData);
 
     fs.writeFileSync('posts.json', json);
     res.sendFile(__dirname + '/html/main.html');
@@ -44,11 +61,19 @@ app.post('/api/newpost', function (req, res) {
 });
 
 app.post('/api/login', function (req, res) {
-	if (req.body.username === 'damian' && req.body.password === '123') {
-    res.sendFile(__dirname + '/html/main.html');
-	} else {
-		res.sendFile(__dirname + '/html/loginerr.html');
-	}
+  fs.readFile('users.json', 'utf-8', function (err, content) {
+    var jsonUsers = JSON.parse(content);
+    var userPassword = jsonUsers[req.body.username];
+    if (typeof userPassword === 'string') {
+      if (userPassword === req.body.password) {
+        res.sendFile(__dirname + '/html/main.html');
+      } else {
+        res.sendFile(__dirname + '/html/loginerr.html');
+      }
+    } else {
+      res.sendFile(__dirname + '/html/signup.html');
+    }
+  });
 });
 
 app.listen(9876, function () {

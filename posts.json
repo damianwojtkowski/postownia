@@ -1,1 +1,13 @@
-{"posts":[{"user":"Damian","postdate":"2017-03-02T18:25:43.511Z","content":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},{"user":"Damian","postdate":"2016-12-22T02:59:32.511Z","content":"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},{"user":"MarshalXD","postdate":"2015-01-01T04:00:32.511Z","content":"Michał Białek kończył nocną wartę w serwerowni wykopu. Za oknem zadłużonej willi poznańskie koziołki ocierały się częściami, których Białek wolałby nigdy nie mieć. Przypomniał sobie o żonie, którą widywał głównie w niedzelne poranki."}]}
+{"posts":[
+  {"user":"Damian",
+    "postdate":"2017-03-02T18:25:43.511Z",
+    "content":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    {"user":"Damian",
+      "postdate":"2016-12-22T02:59:32.511Z",
+      "content":"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    },
+    {"user":"MarshalXD",
+      "postdate":"2015-01-01T04:00:32.511Z",
+      "content":"Michał Białek kończył nocną wartę w serwerowni wykopu. Za oknem zadłużonej willi poznańskie koziołki ocierały się częściami, których Białek wolałby nigdy nie mieć. Przypomniał sobie o żonie, którą widywał głównie w niedzelne poranki."}
+]}
