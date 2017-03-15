@@ -16,7 +16,7 @@
       row.appendChild(cellContent);
       table.appendChild(row);
     }
-    document.body.appendChild(table);
+    document.querySelector('.posts').appendChild(table);
   };
   request.open('GET', '/api/posts', true);
   request.send();

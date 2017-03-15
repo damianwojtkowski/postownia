@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var ejs = require('ejs');
 var app = express(); //aplikacja
 
 app.use(bodyParser.urlencoded({
@@ -48,7 +49,7 @@ app.post('/api/newpost', function (req, res) {
     }
     var jsonData = JSON.parse(content);
     var obj = {};
-    obj.user = "Damian";
+    obj.user = req.body.nick;
     obj.postdate = new Date();
     obj.content = req.body.comment;
     jsonData.posts.push(obj);
@@ -56,7 +57,10 @@ app.post('/api/newpost', function (req, res) {
     var json = JSON.stringify(jsonData);
 
     fs.writeFileSync('posts.json', json);
-    res.sendFile(__dirname + '/html/main.html');
+    var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'utf-8');
+    res.end(ejs.render(templateMain, {
+      nickname: req.body.username
+    }));
   });
 });
 
@@ -66,7 +70,10 @@ app.post('/api/login', function (req, res) {
     var userPassword = jsonUsers[req.body.username];
     if (typeof userPassword === 'string') {
       if (userPassword === req.body.password) {
-        res.sendFile(__dirname + '/html/main.html');
+        var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'utf-8');
+        res.end(ejs.render(templateMain, {
+          nickname: req.body.username
+        }));
       } else {
         res.sendFile(__dirname + '/html/loginerr.html');
       }
