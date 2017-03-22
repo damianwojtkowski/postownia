@@ -18,7 +18,9 @@
       if (nickValue === posts[i].user){
         var cellDeleteButton = document.createElement('td');
         var deleteButton = document.createElement('BUTTON');
-        deleteButton.value = 'Delete post';
+        deleteButton.innerText = 'Delete';
+        deleteButton.style.width = '60px';
+        deleteButton.style.height = '20px';
         deleteButton.id = posts[i].postid;
         deleteButton.type = 'submit';
         deleteButton.onclick = function () {
