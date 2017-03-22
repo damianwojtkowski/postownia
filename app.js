@@ -10,17 +10,40 @@ app.use(bodyParser.urlencoded({
 
 app.use(express.static(__dirname));
 
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/html/login.html');
-}); //pobieranie strony coś jak ping
-
-app.get('/api/posts', function (req, res) {
+var generatePosts = function(req, res) {
   fs.readFile('posts.json', 'utf8', function (err, content) {
     if (err) {
       res.send(err);
     }
     res.send(content);
   });
+}
+
+app.delete('/api/deletepost/:userNick/:deletedPostID', function (req, res) {
+  fs.readFile('posts.json', 'utf8', function (err, content) {
+    if (err) {
+      res.send(err);
+    }
+    var deletedPostID = req.params.deletedPostID;
+    var userNick = req.params.userNick;
+    posts = JSON.parse(content);
+    posts.forEach(function (obj, index, array) {
+      if (+deletedPostID === obj.postid && userNick === obj.user) {
+        array.splice(index, 1);
+      }
+    });
+    var json = JSON.stringify(posts);
+    fs.writeFileSync('posts.json', json);
+    generatePosts(req, res);
+  });
+});
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/html/login.html');
+});
+
+app.get('/api/posts', function (req, res) {
+  generatePosts(req, res);
 });
 
 app.get('/signup', function (req, res) {
@@ -38,7 +61,7 @@ app.post('/api/signup', function (req, res) {
     jsonUsers[user] = password;
     var json = JSON.stringify(jsonUsers);
     fs.writeFileSync('users.json', json);
-    res.sendFile(__dirname + '/html/main.html');
+    res.sendFile(__dirname + '/html/main.ejs');
   });
 });
 
@@ -49,28 +72,28 @@ app.post('/api/newpost', function (req, res) {
     }
     var jsonData = JSON.parse(content);
     var obj = {};
+    var date = new Date();
     obj.user = req.body.nick;
-    obj.postdate = new Date();
+    obj.postdate = date;
     obj.content = req.body.comment;
-    jsonData.posts.push(obj);
-
+    obj.postid = date.getTime();
+    jsonData.push(obj);
     var json = JSON.stringify(jsonData);
-
     fs.writeFileSync('posts.json', json);
     var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'utf-8');
     res.end(ejs.render(templateMain, {
-      nickname: req.body.username
+      nickname: req.body.nick
     }));
   });
 });
 
 app.post('/api/login', function (req, res) {
-  fs.readFile('users.json', 'utf-8', function (err, content) {
+  fs.readFile('users.json', 'UTF-8', function (err, content) {
     var jsonUsers = JSON.parse(content);
     var userPassword = jsonUsers[req.body.username];
     if (typeof userPassword === 'string') {
       if (userPassword === req.body.password) {
-        var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'utf-8');
+        var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'UTF-8');
         res.end(ejs.render(templateMain, {
           nickname: req.body.username
         }));

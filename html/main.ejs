@@ -6,15 +6,14 @@
   <body>
     <div id="container">
       <p>Welcome to Postownia</p><br>
+      <p>Posts of our users</p>
       <div class="posts">
-        <p>Posts of our users</p>
       </div>
       <div class="newpost">
-        <textarea rows="4" cols="50" name="comment" form="newpost" placeholder="How are you?">
-        </textarea>
-        <input type="hidden" name="nick" value="<%= nickname %>" form="newpost">
+        <textarea rows="4" cols="50" name="comment" form="newpost" placeholder="How are you?"></textarea>
+        <input type="hidden" name="nick" value="<%= nickname %>" form="newpost" id="nickname">
         <form action="/api/newpost" method="post" id="newpost">
-          <input type="submit">
+        <input type="submit">
         </form>
       </div>
     </div>
