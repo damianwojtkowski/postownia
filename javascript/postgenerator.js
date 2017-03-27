@@ -1,6 +1,8 @@
 (function () {
   var request = new XMLHttpRequest();
   function loadData(data) {
+    document.querySelector('.posts').innerHTML = '';
+    document.querySelector('.editpost').innerHTML = '';
     var table = document.createElement('table');
     var posts = JSON.parse(data.currentTarget.response);
     var nickValue = document.querySelector('#nickname').value;
@@ -16,6 +18,7 @@
       cellContent.innerText = posts[i].content;
       row.appendChild(cellContent);
       if (nickValue === posts[i].user){
+        //delete button
         var cellDeleteButton = document.createElement('td');
         var deleteButton = document.createElement('BUTTON');
         deleteButton.innerText = 'Delete';
@@ -24,7 +27,6 @@
         deleteButton.id = posts[i].postid;
         deleteButton.type = 'submit';
         deleteButton.onclick = function () {
-          document.querySelector('.posts').innerHTML = '';
           var deleteRequest = new XMLHttpRequest();
           var buttonID = this.id;
           deleteRequest.open('DELETE', '/api/deletepost/' + nickValue + '/' + buttonID, true);
@@ -32,6 +34,46 @@
           deleteRequest.send();
         }
         cellDeleteButton.appendChild(deleteButton);
+        //edit button
+        var cellEditButton = document.createElement('td');
+        var editButton = document.createElement('BUTTON');
+        editButton.innerText = 'Edit';
+        editButton.style.width = '60px';
+        editButton.style.height = '20px';
+        editButton.id = posts[i].postid;
+        editButton.type = 'submit';
+        editButton.onclick = function () {
+          var editTextArea = document.createElement('textarea');
+          editTextArea.rows = 4;
+          editTextArea.cols = 50;
+          editTextArea.name = 'editComment';
+          document.querySelector('.editpost').appendChild(editTextArea);
+          var loadEditCommentRequest = new XMLHttpRequest();
+          var editCommentID = this.id;
+          var submitEditButton = document.createElement('BUTTON');
+          loadEditCommentRequest.open('GET', '/api/loadeditcomment/' + nickValue + '/' + editCommentID);
+          loadEditCommentRequest.onload = function (data) {
+            response = JSON.parse(data.currentTarget.response);
+            editTextArea.innerText = response.comment;
+            submitEditButton.id = response.postID;
+          }
+          loadEditCommentRequest.send();
+          submitEditButton.innerText = 'Send';
+          submitEditButton.style.width = '60px';
+          submitEditButton.style.height = '20px';
+          submitEditButton.type = 'submit';
+          submitEditButton.onclick = function () {
+            var editRequest = new XMLHttpRequest();
+            var editID = this.id;
+            var editedPost = editTextArea.value;
+            editRequest.open('POST', '/api/editpost/' + nickValue + '/' + editID + '/' + editedPost);
+            editRequest.onload = loadData;
+            editRequest.send();
+          }
+          document.querySelector('.editpost').appendChild(submitEditButton);
+        }
+        cellEditButton.appendChild(editButton);
+        row.appendChild(cellEditButton);
         row.appendChild(cellDeleteButton);
       }
       table.appendChild(row);

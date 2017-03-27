@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(__dirname));
 
 var generatePosts = function(req, res) {
-  fs.readFile('posts.json', 'utf8', function (err, content) {
+  fs.readFile('posts.json', 'UTF-8', function (err, content) {
     if (err) {
       res.send(err);
     }
@@ -19,14 +19,15 @@ var generatePosts = function(req, res) {
   });
 }
 
+//delete posts
 app.delete('/api/deletepost/:userNick/:deletedPostID', function (req, res) {
-  fs.readFile('posts.json', 'utf8', function (err, content) {
+  fs.readFile('posts.json', 'UTF-8', function (err, content) {
     if (err) {
       res.send(err);
     }
     var deletedPostID = req.params.deletedPostID;
     var userNick = req.params.userNick;
-    posts = JSON.parse(content);
+    var posts = JSON.parse(content);
     posts.forEach(function (obj, index, array) {
       if (+deletedPostID === obj.postid && userNick === obj.user) {
         array.splice(index, 1);
@@ -42,16 +43,35 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/html/login.html');
 });
 
+//send posts
 app.get('/api/posts', function (req, res) {
   generatePosts(req, res);
 });
 
+//display Sign up page
 app.get('/signup', function (req, res) {
   res.sendFile(__dirname + '/html/signup.html');
 });
 
+//send post to edit them
+app.get('/api/loadeditcomment/:userNick/:loadedPostID', function (req, res) {
+  fs.readFile('posts.json', 'UTF-8', function (err, content) {
+    var loadedPostID = req.params.loadedPostID;
+    var userNick = req.params.userNick;
+    var posts = JSON.parse(content);
+    var editablePost = '';
+    posts.forEach(function (obj, index, array) {
+      if (+loadedPostID === obj.postid && userNick === obj.user) {
+        editablePost = obj.content;
+      }
+    });
+    res.send({postID : loadedPostID, comment : editablePost});
+  });
+});
+
+//sign up new account
 app.post('/api/signup', function (req, res) {
-  fs.readFile('users.json', 'utf-8', function (err, content) {
+  fs.readFile('users.json', 'UTF-8', function (err, content) {
     if (err){
       res.send(err);
     }
@@ -66,7 +86,7 @@ app.post('/api/signup', function (req, res) {
 });
 
 app.post('/api/newpost', function (req, res) {
-  fs.readFile('posts.json', 'utf8', function (err, content) {
+  fs.readFile('posts.json', 'UTF-8', function (err, content) {
     if (err) {
       res.send(err);
     }
@@ -80,7 +100,7 @@ app.post('/api/newpost', function (req, res) {
     jsonData.push(obj);
     var json = JSON.stringify(jsonData);
     fs.writeFileSync('posts.json', json);
-    var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'utf-8');
+    var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'UTF-8');
     res.end(ejs.render(templateMain, {
       nickname: req.body.nick
     }));
@@ -103,6 +123,25 @@ app.post('/api/login', function (req, res) {
     } else {
       res.sendFile(__dirname + '/html/signup.html');
     }
+  });
+});
+
+app.post('/api/editpost/:nickname/:editpostID/:editedpost', function (req, res) {
+  fs.readFile('posts.json', 'UTF-8', function (err, content) {
+    nickname = req.params.nickname;
+    editPostID = req.params.editpostID;
+    editedPost = req.params.editedpost;
+    currentDate = new Date();
+    var posts = JSON.parse(content);
+    posts.forEach(function(obj, index, array) {
+      if (+editPostID === obj.postid && nickname === obj.user) {
+        obj.content = editedPost;
+        obj.postdate = currentDate;
+      }
+    });
+    var json = JSON.stringify(posts);
+    fs.writeFileSync('posts.json', json);
+    generatePosts(req, res);
   });
 });
 
