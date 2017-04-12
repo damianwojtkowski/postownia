@@ -19,28 +19,53 @@ var generatePosts = function(req, res) {
   });
 }
 
-//delete posts
-app.delete('/api/deletepost/:userNick/:deletedPostID', function (req, res) {
-  fs.readFile('posts.json', 'UTF-8', function (err, content) {
+var generatePermissions = function(req, res) {
+  fs.readFile('permissions.json', 'UTF-8', function (err, content) {
     if (err) {
       res.send(err);
     }
-    var deletedPostID = req.params.deletedPostID;
-    var userNick = req.params.userNick;
-    var posts = JSON.parse(content);
-    posts.forEach(function (obj, index, array) {
-      if (+deletedPostID === obj.postid && userNick === obj.user) {
-        array.splice(index, 1);
+    res.send(content);
+  });
+}
+
+var showPosts = function (req, res) {
+  var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'UTF-8');
+  res.end(ejs.render(templateMain, {
+    nickname: req.body.username
+  }));
+}
+
+app.delete('/api/deletepost/:userNick/:deletedPostID', function (req, res) {
+  fs.readFile('posts.json', 'UTF-8', function (error, content) {
+    fs.readFile('permissions.json', 'UTF-8', function (err, cont) {
+      if (error) {
+        res.send(error);
       }
+      var deletedPostID = req.params.deletedPostID;
+      var userNick = req.params.userNick;
+      var permissionLevel = req.params.permissionLevel;
+      var permissions = JSON.parse(cont);
+      var admin = 'admin'
+      var userPermission = permissions[userNick];
+      var posts = JSON.parse(content);
+      posts.forEach(function (obj, index, array) {
+        if (+deletedPostID === obj.postid && (userNick === obj.user || admin === userPermission)) {
+          array.splice(index, 1);
+        }
+      });
+      var json = JSON.stringify(posts);
+      fs.writeFileSync('posts.json', json);
+      generatePosts(req, res);
     });
-    var json = JSON.stringify(posts);
-    fs.writeFileSync('posts.json', json);
-    generatePosts(req, res);
   });
 });
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/html/login.html');
+});
+
+app.get('/permissions', function (req, res) {
+  generatePermissions(req, res);
 });
 
 //send posts
@@ -81,7 +106,14 @@ app.post('/api/signup', function (req, res) {
     jsonUsers[user] = password;
     var json = JSON.stringify(jsonUsers);
     fs.writeFileSync('users.json', json);
-    res.sendFile(__dirname + '/html/main.ejs');
+    fs.readFile('permissions.json', 'UTF-8', function (err, content) {
+      var jsonPermissions = JSON.parse(content);
+      var standardPermission = 'user';
+      jsonPermissions[user] = standardPermission;
+      var permissions = JSON.stringify(jsonPermissions);
+      fs.writeFileSync('permissions.json', permissions);
+    });
+    showPosts(req, res);
   });
 });
 
@@ -113,10 +145,7 @@ app.post('/api/login', function (req, res) {
     var userPassword = jsonUsers[req.body.username];
     if (typeof userPassword === 'string') {
       if (userPassword === req.body.password) {
-        var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'UTF-8');
-        res.end(ejs.render(templateMain, {
-          nickname: req.body.username
-        }));
+        showPosts(req, res);
       } else {
         res.sendFile(__dirname + '/html/loginerr.html');
       }

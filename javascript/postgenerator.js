@@ -1,12 +1,24 @@
 (function () {
   var request = new XMLHttpRequest();
   function loadData(data) {
+    window.postownia = {};
     document.querySelector('.posts').innerHTML = '';
     document.querySelector('.editpost').innerHTML = '';
+    var adminPermission = 'admin';
     var table = document.createElement('table');
     var posts = JSON.parse(data.currentTarget.response);
     var nickValue = document.querySelector('#nickname').value;
-    for (var i = 0, j = posts.length; i < j; i++){
+    var permissionsRequest = new XMLHttpRequest();
+    permissionsRequest.open('GET', '/permissions', false);
+    permissionsRequest.onload = function (data) {
+      var permissions = JSON.parse(data.currentTarget.response);
+      window.postownia.userPermission = permissions[nickValue];
+      console.log('User permission in onload: ' + window.postownia.userPermission);
+    }
+    permissionsRequest.send();
+    console.log('User permission out of function: ' + window.postownia.userPermission);
+    console.log(adminPermission);
+    for (var i = 0, j = posts.length; i < j; i++) {
       var row = document.createElement('tr');
       var cellUser = document.createElement('td');
       cellUser.innerText = posts[i].user;
@@ -17,8 +29,7 @@
       var cellContent = document.createElement('td');
       cellContent.innerText = posts[i].content;
       row.appendChild(cellContent);
-      if (nickValue === posts[i].user){
-        //delete button
+      if (nickValue === posts[i].user || window.postownia.userPermission === adminPermission) {
         var cellDeleteButton = document.createElement('td');
         var deleteButton = document.createElement('BUTTON');
         deleteButton.innerText = 'Delete';
@@ -26,6 +37,7 @@
         deleteButton.style.height = '20px';
         deleteButton.id = posts[i].postid;
         deleteButton.type = 'submit';
+        cellDeleteButton.appendChild(deleteButton);
         deleteButton.onclick = function () {
           var deleteRequest = new XMLHttpRequest();
           var buttonID = this.id;
@@ -33,8 +45,8 @@
           deleteRequest.onload = loadData;
           deleteRequest.send();
         }
-        cellDeleteButton.appendChild(deleteButton);
-        //edit button
+      }
+      if (nickValue === posts[i].user) {
         var cellEditButton = document.createElement('td');
         var editButton = document.createElement('BUTTON');
         editButton.innerText = 'Edit';
@@ -73,9 +85,17 @@
           document.querySelector('.editpost').appendChild(submitEditButton);
         }
         cellEditButton.appendChild(editButton);
+      }
+      if (nickValue === posts[i].user) {
         row.appendChild(cellEditButton);
+      } else {
+        var emptyCell = document.createElement('td');
+        row.appendChild(emptyCell);
+      }
+      if (nickValue === posts[i].user || window.postownia.userPermission === adminPermission) {
         row.appendChild(cellDeleteButton);
       }
+
       table.appendChild(row);
     }
     document.querySelector('.posts').appendChild(table);
