@@ -13,11 +13,8 @@
     permissionsRequest.onload = function (data) {
       var permissions = JSON.parse(data.currentTarget.response);
       window.postownia.userPermission = permissions[nickValue];
-      console.log('User permission in onload: ' + window.postownia.userPermission);
     }
     permissionsRequest.send();
-    console.log('User permission out of function: ' + window.postownia.userPermission);
-    console.log(adminPermission);
     for (var i = 0, j = posts.length; i < j; i++) {
       var row = document.createElement('tr');
       var cellUser = document.createElement('td');

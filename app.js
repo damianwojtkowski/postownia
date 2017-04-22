@@ -30,9 +30,17 @@ var generatePermissions = function(req, res) {
 
 var showPosts = function (req, res) {
   var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'UTF-8');
-  res.end(ejs.render(templateMain, {
-    nickname: req.body.username
-  }));
+  fs.readFile('permissions.json', 'UTF-8', function (err, content) {
+    var permissions = JSON.parse(content);
+    var isHidden = '';
+    if (permissions[req.body.username] !== 'admin'){
+      isHidden = 'hidden';
+    }
+    res.end(ejs.render(templateMain, {
+      nickname: req.body.username,
+      hiddenValue: isHidden
+    }));
+  });
 }
 
 app.delete('/api/deletepost/:userNick/:deletedPostID', function (req, res) {
@@ -76,6 +84,14 @@ app.get('/api/posts', function (req, res) {
 //display Sign up page
 app.get('/signup', function (req, res) {
   res.sendFile(__dirname + '/html/signup.html');
+});
+
+app.get('/displaypermission/:nick', function (req, res) {
+  var templateMain = fs.readFileSync(__dirname + '/html/changePermissions.ejs', 'UTF-8');
+  //console.log(req);
+  res.end(ejs.render(templateMain, {
+    nickname: req.params.nick
+  }));
 });
 
 //send post to edit them
@@ -157,10 +173,10 @@ app.post('/api/login', function (req, res) {
 
 app.post('/api/editpost/:nickname/:editpostID/:editedpost', function (req, res) {
   fs.readFile('posts.json', 'UTF-8', function (err, content) {
-    nickname = req.params.nickname;
-    editPostID = req.params.editpostID;
-    editedPost = req.params.editedpost;
-    currentDate = new Date();
+    var nickname = req.params.nickname;
+    var editPostID = req.params.editpostID;
+    var editedPost = req.params.editedpost;
+    var currentDate = new Date();
     var posts = JSON.parse(content);
     posts.forEach(function(obj, index, array) {
       if (+editPostID === obj.postid && nickname === obj.user) {
@@ -171,6 +187,26 @@ app.post('/api/editpost/:nickname/:editpostID/:editedpost', function (req, res) 
     var json = JSON.stringify(posts);
     fs.writeFileSync('posts.json', json);
     generatePosts(req, res);
+  });
+});
+
+app.post('/changepermissions/:userName/:adminsName', function (req, res) {
+  fs.readFile('permissions.json', 'UTF-8', function (err, content) {
+    var userName = req.params.userName;
+    var adminsName = req.params.adminsName;
+    var permissions = JSON.parse(content);
+    for (var key in permissions) {
+      if (key === adminsName) {
+        if (permissions[userName] === 'admin') {
+          permissions[userName] = 'user';
+        } else {
+          permissions[userName] = 'admin';
+        }
+      }
+    }
+    var json = JSON.stringify(permissions);
+    fs.writeFileSync('permissions.json', json);
+    generatePermissions(req, res);
   });
 });
 

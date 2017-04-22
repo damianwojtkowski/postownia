@@ -16,9 +16,13 @@
         <input type="submit" value="Send">
         </form>
       </div>
-    </div>
-    <script src="/javascript/postgenerator.js"></script>
-    <div class="editpost">
+      <script src="/javascript/postgenerator.js"></script>
+      <div class="editpost">
+      </div>
+      <div class="administration">
+        <form action="/displaypermission/<%= nickname %>" method="get" id="permissions">
+        <input type="submit" style="visibility: <%= hiddenValue %>" value="Change permissions">
+      </div>
     </div>
   </body>
 </html>
