@@ -88,7 +88,6 @@ app.get('/signup', function (req, res) {
 
 app.get('/displaypermission/:nick', function (req, res) {
   var templateMain = fs.readFileSync(__dirname + '/html/changePermissions.ejs', 'UTF-8');
-  //console.log(req);
   res.end(ejs.render(templateMain, {
     nickname: req.params.nick
   }));
@@ -141,17 +140,14 @@ app.post('/api/newpost', function (req, res) {
     var jsonData = JSON.parse(content);
     var obj = {};
     var date = new Date();
-    obj.user = req.body.nick;
+    obj.user = req.body.username;
     obj.postdate = date;
     obj.content = req.body.comment;
     obj.postid = date.getTime();
     jsonData.push(obj);
     var json = JSON.stringify(jsonData);
     fs.writeFileSync('posts.json', json);
-    var templateMain = fs.readFileSync(__dirname + '/html/main.ejs', 'UTF-8');
-    res.end(ejs.render(templateMain, {
-      nickname: req.body.nick
-    }));
+    showPosts(req, res);
   });
 });
 

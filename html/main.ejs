@@ -11,7 +11,7 @@
       </div>
       <div class="newpost">
         <textarea rows="4" cols="50" name="comment" form="newpost" placeholder="How are you?"></textarea>
-        <input type="hidden" name="nick" value="<%= nickname %>" form="newpost" id="nickname">
+        <input type="hidden" name="username" value="<%= nickname %>" form="newpost" id="nickname">
         <form action="/api/newpost" method="post" id="newpost">
         <input type="submit" value="Send">
         </form>
