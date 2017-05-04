@@ -5,7 +5,7 @@ User can:
   * Sign in,
   * Write and read posts,
   * Edit own posts.
-  * Be an admin, who can delete all posts,
+  * Be an admin, who can delete all posts, <br />
   * Be a typical user with no additional permissions.
 Next functionalities will add soon.
 
