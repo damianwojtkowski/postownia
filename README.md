@@ -5,8 +5,6 @@ User can:
   * Sign in,
   * Write and read posts,
   * Edit own posts.
-  * Be an admin, who can delete all posts,<br />
-  * Be a typical user with no additional permissions.<br />
 Next functionalities will add soon.
 
 Visit my blog, where I describe Postownia's development.
